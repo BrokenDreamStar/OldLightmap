@@ -1,0 +1,7 @@
+{
+  "options.oldlightmap.page": "旧版光照",
+  "options.oldlightmap.old_lightmap": "旧版光照 (1.21.8)",
+  "options.oldlightmap.old_lightmap.tooltip": "使用 1.21.8 的光贴图算法（灰色方块光、经典 gamma 曲线）。关闭后使用目标版本的原版光贴图。",
+  "options.oldlightmap.end_flash": "末地闪光",
+  "options.oldlightmap.end_flash.tooltip": "旧版光照与末地闪光存在渲染冲突；开启旧版光照时会自动关闭且无法启用末地闪光。"
+}

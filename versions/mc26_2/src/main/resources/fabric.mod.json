@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "oldlightmap",
+  "version": "${version}",
+  "name": "Old Lightmap",
+  "description": "Restores the 1.21.8 lightmap algorithm on Minecraft 26.2.",
+  "authors": [
+    "BrokenDream_Star"
+  ],
+  "contact": {
+    "homepage": "https://github.com/starm/oldlightmap",
+    "sources": "https://github.com/starm/oldlightmap"
+  },
+  "license": "LGPL-3.0-only",
+  "environment": "client",
+  "entrypoints": {
+    "sodium:config_api_user": [
+      "oldlightmap.sodium.OldLightmapSodiumConfig"
+    ]
+  },
+  "mixins": [
+    "oldlightmap.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "${minecraft_dependency}"
+  },
+  "suggests": {
+    "sodium": "*"
+  }
+}

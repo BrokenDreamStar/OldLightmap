@@ -1,0 +1,68 @@
+plugins {
+	id 'base'
+	id 'net.fabricmc.fabric-loom' version "${loom_version}" apply false
+	id 'net.fabricmc.fabric-loom-remap' version "${loom_version}" apply false
+}
+
+group = project.maven_group
+
+// The root project produces one distribution JAR per supported release group.
+def versionMatrix = [
+	mc1_21: [
+		minecraft: '>=1.21.9 <=1.21.11',
+		loader: '>=0.18.0',
+		shaderUboGroup: '1_21',
+		artifact: 'oldlightmap-1.0.0-1.21.9-1.21.11.jar',
+		sodiumApi: true,
+		mixins: ['LightTextureMixin', 'ShaderManagerMixin']
+	],
+	mc26_1: [
+		minecraft: '26.1.x',
+		loader: '>=0.18.0',
+		shaderUboGroup: '26_1',
+		artifact: 'oldlightmap-1.0.0-26.1.x.jar',
+		sodiumApi: true,
+		mixins: ['LightmapRenderStateExtractorMixin', 'ShaderManagerMixin']
+	],
+	mc26_2: [
+		minecraft: '26.2',
+		loader: '>=0.18.0',
+		shaderUboGroup: '26_1',
+		artifact: 'oldlightmap-1.0.0-26.2.jar',
+		sodiumApi: true,
+		mixins: ['LightmapRenderStateExtractorMixin', 'ShaderManagerMixin']
+	]
+]
+
+tasks.register('verifyVersionMatrix') {
+	group = 'verification'
+	description = 'Checks the three UBO shader-family distribution projects.'
+	doLast {
+		def parser = new groovy.json.JsonSlurper()
+		versionMatrix.each { projectName, spec ->
+			def targetDir = file("versions/${projectName}")
+			assert targetDir.isDirectory(): "Missing distribution directory: ${targetDir}"
+			def metadataFile = file("${targetDir}/src/main/resources/fabric.mod.json")
+			def metadata = parser.parseText(metadataFile.text
+				.replace('${minecraft_dependency}', spec.minecraft)
+				.replace('${version}', 'test'))
+			assert metadata.depends.minecraft == spec.minecraft: "${projectName}: wrong Minecraft range"
+			assert metadata.depends.fabricloader == spec.loader: "${projectName}: wrong Fabric Loader dependency"
+			assert metadata.suggests.sodium == '*': "${projectName}: Sodium must remain unconstrained"
+			def shaderGroup = file("${targetDir}/src/main/resources/assets/oldlightmap/shaders/shader_ubo_group.properties")
+			assert shaderGroup.isFile(): "${projectName}: missing UBO shader group marker"
+			assert shaderGroup.text.trim() == "group=${spec.shaderUboGroup}": "${projectName}: wrong UBO shader group"
+			def mixinConfig = parser.parse(file("${targetDir}/src/main/resources/oldlightmap.mixins.json"))
+			assert mixinConfig.client == spec.mixins: "${projectName}: wrong version-specific mixin set"
+			spec.mixins.each { mixinName ->
+				assert file("${targetDir}/src/main/java/oldlightmap/mixin/${mixinName}.java").isFile(): "${projectName}: missing ${mixinName}.java"
+			}
+			if (spec.sodiumApi) {
+				assert metadata.entrypoints?.'sodium:config_api_user': "${projectName}: Sodium config entrypoint missing"
+			} else {
+				assert !metadata.entrypoints?.'sodium:config_api_user': "${projectName}: Sodium API must not be declared"
+			}
+		}
+		println "Verified ${versionMatrix.size()} UBO shader-family distribution projects."
+	}
+}

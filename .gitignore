@@ -1,0 +1,11 @@
+.gradle/
+build/
+out/
+*.iml
+.idea/
+.vscode/
+run/
+.pytest_cache/
+.DS_Store
+__pycache__/
+*.py[cod]

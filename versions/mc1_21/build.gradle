@@ -1,0 +1,57 @@
+plugins {
+	id 'net.fabricmc.fabric-loom-remap'
+}
+
+def compileMinecraftVersion = '1.21.9'
+def supportedMinecraftVersion = '>=1.21.9 <=1.21.11'
+def artifactSuffix = '1.21.9-1.21.11'
+def sodiumApiVersion = "0.8.13+mc1.21.11"
+
+group = rootProject.maven_group
+version = "${rootProject.mod_version}-${artifactSuffix}"
+
+base {
+	archivesName = rootProject.archives_base_name
+}
+
+repositories {
+	maven {
+		name = "CaffeineMC"
+		url = "https://maven.caffeinemc.net/releases"
+	}
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${compileMinecraftVersion}"
+	modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+	mappings loom.officialMojangMappings()
+	if (sodiumApiVersion != null) {
+		modCompileOnly "net.caffeinemc:sodium-fabric-api:${sodiumApiVersion}"
+	}
+}
+
+sourceSets.main.java.srcDirs = [
+	"${rootProject.projectDir}/common/src/main/java",
+	"src/main/java"
+]
+sourceSets.main.resources.srcDirs = [
+	"${rootProject.projectDir}/common/src/main/resources",
+	"src/main/resources"
+]
+
+processResources {
+	inputs.property "version", project.version
+	inputs.property "minecraft_dependency", supportedMinecraftVersion
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version, "minecraft_dependency": supportedMinecraftVersion
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	options.release = 21
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
