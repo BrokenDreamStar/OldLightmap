@@ -1,7 +1,7 @@
 {
   "options.oldlightmap.page": "Old Lightmap",
   "options.oldlightmap.old_lightmap": "Old lightmap (1.21.8)",
-  "options.oldlightmap.old_lightmap.tooltip": "Use the 1.21.8 lightmap algorithm (grey block light, classic gamma curve). Disable to use the the target version's vanilla lightmap.",
+  "options.oldlightmap.old_lightmap.tooltip": "Use the 1.21.8 lightmap algorithm.",
   "options.oldlightmap.end_flash": "End flash",
-  "options.oldlightmap.end_flash.tooltip": "End flash is disabled while the old lightmap is enabled because the two rendering paths are incompatible."
+  "options.oldlightmap.end_flash.tooltip": "The old lightmap conflicts with End flash rendering; End flash is automatically disabled and cannot be enabled while the old lightmap is enabled."
 }

@@ -1,113 +1,60 @@
 # Old Lightmap
 
-A Fabric client mod that restores the **1.21.8 lightmap rendering** using two
-UBO-compatible distribution JARs:
+<p align="center">
+  <b>English</b> ·
+  <a href="README.zh-CN.md">简体中文</a>
+</p>
 
-- **1.21.9–1.21.11** — uses the pre-26.1 `LightmapInfo` UBO shader.
-- **26.1.x** — uses the 26.1+ `LightmapInfo` UBO shader.
-- **26.2** — uses the same 26.1+ UBO layout, but is distributed separately.
+Old Lightmap is a client-side Fabric mod that restores the Minecraft 1.21.8 lightmap algorithm on Minecraft 1.21.9 and newer versions.
 
-The output is grouped by UBO layout, not by every Minecraft patch version.
-Install only the JAR matching the target range.
+## Lighting comparison
 
-## Distribution JARs
+The following screenshots compare the original lighting in Minecraft 1.21.8, the changed lighting in Minecraft 1.21.9, and the restored result with Old Lightmap, all at `time set 11800`.
 
-```text
-oldlightmap-1.0.0-1.21.9-1.21.11.jar
-oldlightmap-1.0.0-26.1.x.jar
-oldlightmap-1.0.0-26.2.jar
-```
+<p align="center">
+  <img src="assets/readme/lightmap-comparison/1.21.8-vanilla.png" alt="Minecraft 1.21.8 Vanilla lighting" width="32%">
+  <img src="assets/readme/lightmap-comparison/1.21.9-vanilla.png" alt="Minecraft 1.21.9 Vanilla lighting" width="32%">
+  <img src="assets/readme/lightmap-comparison/1.21.9-oldlightmap.png" alt="Minecraft 1.21.9 with Old Lightmap" width="32%">
+</p>
 
-The first JAR declares the Minecraft dependency range `>=1.21.9 <=1.21.11`.
-The 26.1.x JAR declares `26.1.x`, while the 26.2 JAR declares `26.2`.
-Although they share the same UBO layout, they are released separately.
-
-## What it fixes
-
-The mod restores the 1.21.8 lightmap shader and old block-light behaviour.
-End flash is disabled by default and is automatically disabled while old lighting
-is enabled, because the two rendering paths are incompatible. It avoids the incompatible `pre-1.21.9-lighting` resource
-pack, whose shader layout does not match the newer lightmap uniform block.
-
-Each distribution explicitly declares its UBO family in:
-
-```text
-assets/oldlightmap/shaders/shader_ubo_group.properties
-```
-
-The 1.21.9–1.21.11 JAR uses the `1_21` shader group. Both the 26.1.x and
-26.2 JARs use the `26_1` shader group.
-
-## Configuration
-
-The config file is written to `config/oldlightmap.json`:
-
-```json
-{"oldLightmap":true,"endFlash":false}
-```
-
-| Option | Default | Effect |
-|---|---:|---|
-| `oldLightmap` | `true` | Use the 1.21.8 lightmap algorithm instead of the target version's vanilla algorithm. |
-| `endFlash` | `false` | Keep the target version's End flash effect; unavailable while old lighting is enabled. |
-
-A config page is available in the following places:
-
-- **Sodium 0.7 on 1.21.9:** the 1.21.x JAR adds an "Old Lightmap" page
-  directly to Sodium's own options screen. No Reese's Sodium Options or Mod Menu
-  is required.
-- **Sodium releases with the official config API:** the JAR registers the same
-  page through Sodium's `sodium:config_api_user` entrypoint, following the
-  integration pattern used by projects such as Voxy.
-- **Sodium 0.7.x:** when the official API is unavailable, the JAR adds the page
-  through Sodium's native `SodiumOptionsGUI` path, which avoids registering a
-  second page when Reese's Sodium Options is installed.
-- **26.1.x and 26.2:** the JAR uses the official Sodium config API directly.
-
-If no supported options screen is installed, edit `config/oldlightmap.json`
-directly on all versions.
-
-Sodium remains optional and its Fabric metadata version constraint is `"*"`.
+<p align="center">
+  <sub>Minecraft 1.21.8 Vanilla</sub> &nbsp;&nbsp;&nbsp;
+  <sub>Minecraft 1.21.9 Vanilla</sub> &nbsp;&nbsp;&nbsp;
+  <sub>Minecraft 1.21.9 + Old Lightmap</sub>
+</p>
 
 ## Installation
 
-1. Choose the JAR matching the Minecraft version:
-   - `oldlightmap-1.0.0-1.21.9-1.21.11.jar` for 1.21.9–1.21.11.
-   - `oldlightmap-1.0.0-26.1.x.jar` for 26.1.x.
-   - `oldlightmap-1.0.0-26.2.jar` for 26.2.
-2. Put it in the instance's `.minecraft/mods/` directory.
-3. Install Fabric Loader **0.18.0 or newer**.
-4. Remove the old **Pre 1.21.9 Lighting** resource pack if it is installed.
+1. Install the matching version of [Fabric Loader](https://fabricmc.net/).
+2. Download the JAR for your Minecraft version.
+3. Put the JAR into the `.minecraft/mods` directory.
+4. Start Minecraft.
 
-## Build
+Sodium is optional. If Sodium is installed, the mod adds a configuration tab to Sodium's settings screen. If Sodium is not installed, the mod cannot be configured.
 
-Requires JDK 21 for the 1.21.x distribution and JDK 25 for the 26.1.x/26.2
-distributions. The active Java installation must be able to compile the target
-being built.
+## Build from source
 
-```sh
-./gradlew build
+Requirements:
+
+- Minecraft 1.21.9–1.21.11 requires Java 21.
+- Minecraft 26.1.x and 26.2 require Java 25.
+
+Build all distributions:
+
+```bash
+./gradlew clean build
 ```
 
-JARs are generated under:
+Build an individual distribution:
 
-```text
-versions/mc1_21/build/libs/oldlightmap-1.0.0-1.21.9-1.21.11.jar
-versions/mc26_1/build/libs/oldlightmap-1.0.0-26.1.x.jar
-versions/mc26_2/build/libs/oldlightmap-1.0.0-26.2.jar
+```bash
+./gradlew :mc1_21:build
+./gradlew :mc26_1:build
+./gradlew :mc26_2:build
 ```
 
-Run the structural metadata check separately with:
+The generated JAR files are written to the corresponding `versions/*/build/libs/` directory.
 
-```sh
-./gradlew verifyVersionMatrix
-```
+## License
 
-## Project layout
-
-```text
-common/                 Shared Java classes and shader assets
-versions/mc1_21/        1.21.9–1.21.11 UBO distribution
-versions/mc26_1/        26.1.x UBO distribution
-versions/mc26_2/        26.2 UBO distribution
-```
+Old Lightmap is licensed under the [GNU Lesser General Public License v3.0 (LGPLv3)](LICENSE).
