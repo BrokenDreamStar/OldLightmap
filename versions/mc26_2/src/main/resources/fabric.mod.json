@@ -9,8 +9,8 @@
     "BrokenDream_Star"
   ],
   "contact": {
-    "homepage": "https://github.com/starm/oldlightmap",
-    "sources": "https://github.com/starm/oldlightmap"
+    "homepage": "https://github.com/BrokenDreamStar/OldLightmap",
+    "sources": "https://github.com/BrokenDreamStar/OldLightmap"
   },
   "license": "LGPL-3.0-only",
   "environment": "client",
