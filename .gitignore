@@ -1,5 +1,5 @@
 .gradle/
-build/
+versions/*/build/
 out/
 *.iml
 .idea/
@@ -9,7 +9,5 @@ run/
 .DS_Store
 __pycache__/
 *.py[cod]
-test/
 tests/
-versions/
 docs/
