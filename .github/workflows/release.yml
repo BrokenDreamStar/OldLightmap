@@ -1,0 +1,85 @@
+name: Build and release JARs
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.head.ref == 'dev'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the merge commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Set up Java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build all JARs
+        run: ./gradlew build --stacktrace
+
+      - name: Read release metadata
+        id: metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="$(sed -n 's/^mod_version=//p' gradle.properties | head -n 1)"
+          if [[ -z "$version" ]]; then
+            echo 'mod_version is missing from gradle.properties' >&2
+            exit 1
+          fi
+
+          tag="v${version}-${GITHUB_RUN_NUMBER}"
+          title="OldLightmap ${version} (build ${GITHUB_RUN_NUMBER})"
+          {
+            echo "version=$version"
+            echo "tag=$tag"
+            echo "title=$title"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upload JARs as workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: oldlightmap-jars-${{ steps.metadata.outputs.version }}-${{ github.run_number }}
+          path: versions/*/build/libs/*.jar
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.metadata.outputs.tag }}
+          RELEASE_TITLE: ${{ steps.metadata.outputs.title }}
+          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t jars < <(find versions -type f -path '*/build/libs/*.jar' -print | sort)
+          if (( ${#jars[@]} == 0 )); then
+            echo 'No JAR files were produced under versions/*/build/libs/' >&2
+            exit 1
+          fi
+
+          gh release create "$RELEASE_TAG" "${jars[@]}" \
+            --target "$MERGE_SHA" \
+            --title "$RELEASE_TITLE" \
+            --notes "Built from the merged dev branch (commit ${MERGE_SHA})."
