@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "oldlightmap.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "LightmapRenderStateExtractorMixin",
+    "ShaderManagerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

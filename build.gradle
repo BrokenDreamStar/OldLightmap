@@ -31,12 +31,20 @@ def versionMatrix = [
 		artifact: 'oldlightmap-1.0.0-26.2.jar',
 		sodiumApi: true,
 		mixins: ['LightmapRenderStateExtractorMixin', 'ShaderManagerMixin']
+	],
+	mc26_3: [
+		minecraft: '26.3',
+		loader: '>=0.18.0',
+		shaderUboGroup: '26_3',
+		artifact: 'oldlightmap-1.0.0-26.3.jar',
+		sodiumApi: true,
+		mixins: ['LightmapRenderStateExtractorMixin', 'ShaderManagerMixin']
 	]
 ]
 
 tasks.register('verifyVersionMatrix') {
 	group = 'verification'
-	description = 'Checks the three UBO shader-family distribution projects.'
+	description = 'Checks every UBO shader-family distribution project.'
 	doLast {
 		def parser = new groovy.json.JsonSlurper()
 		versionMatrix.each { projectName, spec ->
