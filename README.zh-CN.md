@@ -37,7 +37,7 @@ Sodium 是可选依赖。如果安装了 Sodium，模组会在 Sodium 设置页�
 环境要求：
 
 - Minecraft 1.21.9–1.21.11 需要 Java 21。
-- Minecraft 26.1.x 和 26.2 需要 Java 25。
+- Minecraft 26.1.x、26.2 和 26.3 需要 Java 25。
 
 构建全部发行版：
 
@@ -51,6 +51,7 @@ Sodium 是可选依赖。如果安装了 Sodium，模组会在 Sodium 设置页�
 ./gradlew :mc1_21:build
 ./gradlew :mc26_1:build
 ./gradlew :mc26_2:build
+./gradlew :mc26_3:build
 ```
 
 生成的 JAR 文件位于对应的 `versions/*/build/libs/` 目录中。

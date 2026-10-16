@@ -8,6 +8,8 @@ import java.util.Properties;
 /**
  * Loads the lightmap shader variants for the target's explicit UBO family.
  * The active variant is selected at shader-compile time (see ShaderManagerMixin).
+ * 26.3 compiles shaders to SPIR-V and therefore needs explicit interface
+ * locations, so it uses its own variant of the same algorithm.
  */
 public final class OldLightmapShaders {
 	private static final String GROUP_PATH = "/assets/oldlightmap/shaders/shader_ubo_group.properties";
@@ -15,6 +17,8 @@ public final class OldLightmapShaders {
 	private static final String LEGACY_OLD_FLASH_PATH = "/assets/oldlightmap/shaders/core/lightmap_old_flash_1_21.fsh";
 	private static final String MODERN_OLD_PATH = "/assets/oldlightmap/shaders/core/lightmap_old_26_1.fsh";
 	private static final String MODERN_OLD_FLASH_PATH = "/assets/oldlightmap/shaders/core/lightmap_old_flash_26_1.fsh";
+	private static final String SPIRV_OLD_PATH = "/assets/oldlightmap/shaders/core/lightmap_old_26_3.fsh";
+	private static final String SPIRV_OLD_FLASH_PATH = "/assets/oldlightmap/shaders/core/lightmap_old_flash_26_3.fsh";
 
 	private static final ShaderUboGroup SHADER_UBO_GROUP = loadShaderUboGroup();
 	private static String oldSource;
@@ -51,10 +55,14 @@ public final class OldLightmapShaders {
 	}
 
 	private static String shaderPath(boolean endFlash) {
-		if (SHADER_UBO_GROUP == ShaderUboGroup.ONE_TWENTY_ONE) {
-			return endFlash ? LEGACY_OLD_FLASH_PATH : LEGACY_OLD_PATH;
+		switch (SHADER_UBO_GROUP) {
+			case ONE_TWENTY_ONE:
+				return endFlash ? LEGACY_OLD_FLASH_PATH : LEGACY_OLD_PATH;
+			case TWENTY_SIX_THREE:
+				return endFlash ? SPIRV_OLD_FLASH_PATH : SPIRV_OLD_PATH;
+			default:
+				return endFlash ? MODERN_OLD_FLASH_PATH : MODERN_OLD_PATH;
 		}
-		return endFlash ? MODERN_OLD_FLASH_PATH : MODERN_OLD_PATH;
 	}
 
 	private static ShaderUboGroup loadShaderUboGroup() {
@@ -74,7 +82,8 @@ public final class OldLightmapShaders {
 
 	private enum ShaderUboGroup {
 		ONE_TWENTY_ONE("1_21"),
-		TWENTY_SIX_ONE("26_1");
+		TWENTY_SIX_ONE("26_1"),
+		TWENTY_SIX_THREE("26_3");
 
 		private final String id;
 

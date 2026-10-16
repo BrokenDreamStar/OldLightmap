@@ -37,7 +37,7 @@ Sodium is optional. If Sodium is installed, the mod adds a configuration tab to 
 Requirements:
 
 - Minecraft 1.21.9–1.21.11 requires Java 21.
-- Minecraft 26.1.x and 26.2 require Java 25.
+- Minecraft 26.1.x, 26.2 and 26.3 require Java 25.
 
 Build all distributions:
 
@@ -51,6 +51,7 @@ Build an individual distribution:
 ./gradlew :mc1_21:build
 ./gradlew :mc26_1:build
 ./gradlew :mc26_2:build
+./gradlew :mc26_3:build
 ```
 
 The generated JAR files are written to the corresponding `versions/*/build/libs/` directory.

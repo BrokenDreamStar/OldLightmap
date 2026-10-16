@@ -11,8 +11,9 @@ pluginManagement {
 
 rootProject.name = 'oldlightmap'
 
-include 'mc1_21', 'mc26_1', 'mc26_2'
+include 'mc1_21', 'mc26_1', 'mc26_2', 'mc26_3'
 project(':mc1_21').projectDir = file('versions/mc1_21')
 project(':mc26_1').projectDir = file('versions/mc26_1')
 
 project(':mc26_2').projectDir = file('versions/mc26_2')
+project(':mc26_3').projectDir = file('versions/mc26_3')
