@@ -3,7 +3,7 @@
   "id": "oldlightmap",
   "version": "${version}",
   "name": "Old Lightmap",
-  "icon": "assets/oldlightmap/icon.png",
+  "icon": "assets/oldlightmap/textures/icon.png",
   "description": "Restores the 1.21.8 lightmap algorithm on Minecraft 26.3.",
   "authors": [
     "BrokenDream_Star"
