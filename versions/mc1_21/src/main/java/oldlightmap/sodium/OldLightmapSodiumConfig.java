@@ -22,6 +22,9 @@ public final class OldLightmapSodiumConfig implements ConfigEntryPoint {
 		OptionPageBuilder page = builder.createOptionPage()
 			.setName(Component.translatable("options.oldlightmap.page"));
 		ResourceLocation oldLightmapId = ResourceLocation.fromNamespaceAndPath("oldlightmap", "old_lightmap");
+		// Sodium renders mod icons through the texture manager, so the icon
+		// has to be a texture under assets/oldlightmap/textures/.
+		ResourceLocation iconId = ResourceLocation.fromNamespaceAndPath("oldlightmap", "textures/icon.png");
 
 		BooleanOptionBuilder oldLightmap = builder
 			.createBooleanOption(oldLightmapId)
@@ -72,7 +75,9 @@ public final class OldLightmapSodiumConfig implements ConfigEntryPoint {
 		page.addOptionGroup(builder.createOptionGroup()
 			.addOption(oldLightmap)
 			.addOption(endFlash));
-		builder.registerOwnModOptions().addPage(page);
+		builder.registerOwnModOptions()
+			.setNonTintedIcon(iconId)
+			.addPage(page);
 	}
 
 	private static void afterSave() {
